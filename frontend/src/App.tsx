@@ -1,5 +1,7 @@
 import * as React from "react";
 
+import HomePage from "./pages/HomePage";
+
 export default function App() {
-  return <pre>App</pre>;
+  return <HomePage />;
 }
