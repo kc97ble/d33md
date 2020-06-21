@@ -1,11 +1,57 @@
-import { text } from "body-parser";
-
 type Tree = {
   type: string;
   children: string | Array<Tree>;
 };
 
-function sanitize(s: string): string {
+const SANITIZE_TEXT_MODE = {
+  "\\": "\\textbackslash{}",
+  "{": "\\{",
+  "}": "\\}",
+  $: "\\$",
+  "&": "\\&",
+  "#": "\\#",
+  "^": "\\^{}",
+  _: "\\_",
+  "~": "\\textasciitilde{}",
+  "%": "\\%",
+  "<": "\\textless{}",
+  ">": "\\textgreater{}",
+  "|": "\\textbar{}",
+  // '"': "``",
+  // "'": "\textquotesingle{}",
+  // "`": "\textasciigrave{}",
+};
+
+export function sanitizeTextMode(s: string): string {
+  s.replace(/[\\{}$&#^_~%<>|"'`]/, function (matched) {
+    return SANITIZE_TEXT_MODE[matched] || matched;
+  });
+  return s;
+}
+
+const SANITIZE_MATH_MODE = {
+  // "\\": "\\textbackslash{}",
+  "{": "\\{",
+  "}": "\\}",
+  $: "\\$",
+  "&": "\\&",
+  "#": "\\#",
+  // "^": "\\^{}",
+  // _: "\\_",
+  // "~": "\\textasciitilde{}",
+  "%": "\\%",
+  // "<": "\\textless{}",
+  // ">": "\\textgreater{}",
+  // "|": "\\textbar{}",
+  // '"': "``",
+  // "'": "\textquotesingle{}",
+  // "`": "\textasciigrave{}",
+};
+
+export function sanitizeMathMode(s: string): string {
+  s.replace(/[\\{}$&#^_~%<>|"'`]/, function (matched) {
+    return SANITIZE_TEXT_MODE[matched] || matched;
+  });
   return s;
 }
 
@@ -164,13 +210,15 @@ function opToLatex(text: string): string {
     "!=": "\\ne",
     "===": "\\equiv",
     "*": "\\times",
+    "<": "<",
+    ">": ">",
   };
-  return sanitize(MAP[text] || text);
+  return MAP[text] || sanitizeMathMode(text);
 }
 
 function treeToLatex(node: Tree): string {
   if (node.type === "literal") {
-    return sanitize(opToLatex(node.children as string));
+    return opToLatex(node.children as string);
   } else if (node.type === "concat") {
     return (node.children as Array<Tree>)
       .map((child) => treeToLatex(child))

@@ -1,8 +1,5 @@
 import marked from "marked";
-
-function sanitize(text: string) {
-  return text;
-}
+import * as utils from "./utils";
 
 class CustomRenderer extends marked.Renderer {
   code(
@@ -25,16 +22,16 @@ class CustomRenderer extends marked.Renderer {
     slugger: marked.Slugger
   ): string => {
     if (level === 1) {
-      return `\\problemtitle{${sanitize(text)}}\n`;
+      return `\n\\problemtitle{${utils.sanitizeTextMode(text)}}\n`;
     } else if (level === 2) {
-      return `\\heading{${sanitize(text)}}\n`;
+      return `\n\\heading{${utils.sanitizeTextMode(text)}}\n`;
     } else {
-      return "?? :D ??";
+      return " ?? :D ?? ";
     }
   };
-  // hr(): string {
-  //   return "?? :D ??";
-  // }
+  hr(): string {
+    return " \\pagebreak ";
+  }
   // list(body: string, ordered: boolean, start: number): string {
   //   return "?? :D ??";
   // }
@@ -45,7 +42,7 @@ class CustomRenderer extends marked.Renderer {
   //   return "?? :D ??";
   // }
   paragraph(text: string): string {
-    return sanitize(text);
+    return `\n${utils.sanitizeTextMode(text)}\n`;
   }
   // table(header: string, body: string): string {
   //   return "?? :D ??";
@@ -62,21 +59,23 @@ class CustomRenderer extends marked.Renderer {
   // ): string {
   //   return "?? :D ??";
   // }
-  // strong(text: string): string {
-  //   return "?? :D ??";
-  // }
-  // em(text: string): string {
-  //   return "?? :D ??";
-  // }
-  codespan(code: string): string {
-    return `\\texttt{${sanitize(code)}}`;
+  strong(text: string): string {
+    return ` \\textbf{${utils.sanitizeTextMode(text)}} `;
   }
-  // br(): string {
-  //   return "?? :D ??";
-  // }
-  // del(text: string): string {
-  //   return "?? :D ??";
-  // }
+  em(text: string): string {
+    return ` \\emph{${utils.sanitizeTextMode(text)}} `;
+  }
+  codespan(code: string): string {
+    const unescaped = utils.unescape(code);
+    console.log(code, unescaped);
+    return ` $ ${utils.latexize(unescaped)} $ `;
+  }
+  br(): string {
+    return "\n\n";
+  }
+  del(text: string): string {
+    return ` \\sout{${utils.sanitizeTextMode(text)}} `;
+  }
   // link(
   //   href: string | null,
   //   title: string | null,
@@ -91,9 +90,9 @@ class CustomRenderer extends marked.Renderer {
   // ): string {
   //   return "?? :D ??";
   // }
-  // text(text: string): string {
-  //   return "?? :D ??";
-  // }
+  text(text: string): string {
+    return ` ${utils.sanitizeTextMode(text)} `;
+  }
 }
 
 const renderer = new CustomRenderer();
