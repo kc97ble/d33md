@@ -10,6 +10,9 @@ module.exports = {
   },
   resolve: {
     extensions: [".ts", ".tsx", ".js", ".jsx"],
+    alias: {
+      "@d33md/config": path.resolve(__dirname, "config.js"),
+    },
   },
   module: {
     rules: [

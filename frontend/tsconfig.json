@@ -5,6 +5,10 @@
     "noImplicitAny": true,
     "module": "commonjs",
     "target": "ES6",
-    "jsx": "react"
+    "jsx": "react",
+    "baseUrl": ".",
+    "paths": {
+      "@d33md/config": ["config.js", "config.example.js"]
+    }
   }
 }
