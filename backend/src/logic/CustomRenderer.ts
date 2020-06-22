@@ -1,7 +1,14 @@
 import marked from "marked";
 import * as utils from "../utils";
+import Advisor from "./Advisor";
 
 export default class CustomRenderer extends marked.Renderer {
+  advisor: Advisor;
+
+  constructor(advisor: Advisor) {
+    super();
+    this.advisor = advisor;
+  }
   // need to sanitize code
   // TODO
   code(
@@ -9,7 +16,24 @@ export default class CustomRenderer extends marked.Renderer {
     language: string | undefined,
     isEscaped: boolean
   ): string {
-    return `\\texttt{${utils.sanitizeTextMode(code)}}`; // TODO
+    // return `\\texttt{${utils.sanitizeTextMode(code)}}`; // TODO
+    const id = code;
+    const actualCode = utils.sanitizeCodeMode(
+      this.advisor.getCode(id)
+    );
+    if (this.advisor.isFirstInput(id)) {
+      return `\\begin{example}\n  \\exmp{%\n${actualCode}\n  }`;
+    }
+    if (this.advisor.isInput(id)) {
+      return `\\exmp{%\n${actualCode}\n  }`;
+    }
+    if (this.advisor.isLastOutput(id)) {
+      return `{%\n${actualCode}\n  }%\n\\end{example}\n\n`;
+    }
+    if (this.advisor.isOutput(id)) {
+      return `{%\n${actualCode}\n  }`;
+    }
+    return `\\texttt{${utils.sanitizeTextMode(actualCode)}}`;
   }
 
   blockquote(quote: string): string {
@@ -47,7 +71,7 @@ export default class CustomRenderer extends marked.Renderer {
   }
 
   listitem(text: string): string {
-    return `\\item ${text}`;
+    return `\\item ${text}\n`;
   }
 
   // checkbox is not supported
@@ -56,7 +80,7 @@ export default class CustomRenderer extends marked.Renderer {
   }
 
   paragraph(text: string): string {
-    return `${text}\n`;
+    return `${text}\n\n`;
   }
 
   // table are not supported

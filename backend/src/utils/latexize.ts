@@ -55,6 +55,10 @@ export function sanitizeMathMode(s: string): string {
   return s;
 }
 
+export function sanitizeCodeMode(s: string): string {
+  return s;
+}
+
 function getRole(text: string) {
   let h = 0;
   let result = "";

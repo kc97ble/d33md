@@ -1,13 +1,31 @@
 import marked from "marked";
 import CustomRenderer from "./CustomRenderer";
+import Advisor from "./Advisor";
+import * as uuid from "uuid";
 
-class Preprocessor {
+class Preprocessor implements Advisor {
   types = new Set();
+  codes = {};
+  lastCodeToken = null;
 
   walker = (token) => {
     this.types.add(token.type);
     if (token.type === "code") {
-      console.log(token);
+      const id = uuid.v1();
+      this.codes[id] = {
+        ...token,
+        hasNext: false,
+        index: !!this.lastCodeToken
+          ? this.lastCodeToken.index + 1
+          : 0,
+      };
+      if (!!this.lastCodeToken) {
+        this.lastCodeToken.hasNext = true;
+      }
+      token.text = id;
+      this.lastCodeToken = this.codes[id];
+    } else {
+      this.lastCodeToken = null;
     }
   };
 
@@ -21,11 +39,41 @@ class Preprocessor {
     }
     return result;
   }
+
+  isFirstInput(id: string): boolean {
+    if (!this.codes.hasOwnProperty(id)) return false;
+    const info = this.codes[id];
+    return !!info.hasNext && info.index === 0;
+  }
+
+  isInput(id: string): boolean {
+    if (!this.codes.hasOwnProperty(id)) return false;
+    const info = this.codes[id];
+    return !!info.hasNext && info.index % 2 === 0;
+  }
+
+  isOutput(id: string): boolean {
+    if (!this.codes.hasOwnProperty(id)) return false;
+    const info = this.codes[id];
+    return info.index % 2 === 1;
+  }
+
+  isLastOutput(id: string): boolean {
+    if (!this.codes.hasOwnProperty(id)) return false;
+    const info = this.codes[id];
+    return !info.hasNext && info.index !== 0; // ensure that block always closes
+  }
+
+  getCode(id: string): string {
+    if (!this.codes.hasOwnProperty(id)) return "?? :D ??";
+    const info = this.codes[id];
+    return info.text;
+  }
 }
 
 export function mdToLatex(text: string) {
-  const renderer = new CustomRenderer();
   const preprocessor = new Preprocessor();
+  const renderer = new CustomRenderer(preprocessor);
 
   const tokens = marked.lexer(text);
   (marked as any).walkTokens(tokens, preprocessor.walker);
@@ -59,7 +107,7 @@ Hãy tìm chênh lệch điểm tối đa giữa Tí và Sửu.
 ## Dữ liệu
 
 - Dòng đầu tiên chứa số nguyên \`N\`, là số lượng bài tập \`(1 <= N <= 50)\`.
-- Dòng thứ hai chứa \`N\` số nguyên \`a[1], a[2], ..., a[N] (1 <= a[i] <= 50)\`, là điểm số của các bài tập.
+- Dòng thứ hai chứa \`N\` số nguyên \`a_1, a_2, ..., a_N (1 <= a_i <= 50)\`, là điểm số của các bài tập.
 
 ## Kết quả
 
@@ -68,12 +116,24 @@ In ra chênh lệch điểm tối đa giữa Tí và Sửu.
 ## Ví dụ
 
 \`\`\`
-3$
-1 > 2 > 3
+1 2
 \`\`\`
 \`\`\`
-4
+3 4
 \`\`\`
-  
+\`\`\`
+5 6
+\`\`\`
+\`\`\`
+7 8
+\`\`\`
+
+hmm
+
+hmm
+
+\`\`\`
+9 0
+\`\`\`
 `)
 );
