@@ -15,7 +15,7 @@ export default function App() {
     if (res.error) {
       alert(JSON.stringify(res));
     } else {
-      setPreview(res.data.url);
+      setPreview(res.data.id);
     }
   };
 
@@ -40,7 +40,7 @@ export default function App() {
             setText(e.newValue);
           }}
         />
-        <PreviewPanel url={preview} />
+        <PreviewPanel id={preview} />
       </main>
     </div>
   );

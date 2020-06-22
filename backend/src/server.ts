@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import * as logic from "./logic";
+import * as storage from "./storage";
 
 const app = express();
 app.use(cors());
@@ -11,18 +12,17 @@ app.get("/", function (req, res) {
   res.send("Hello World!");
 });
 
-app.all("/convert", (req, res) => {
-  console.log(Object.keys(req));
-  console.log(req.params);
-  console.log(req.body);
+app.all("/convert", async (req, res) => {
   const { text } = req.body;
-  res.json({
-    data: {
-      url:
-        "https://www.w3.org/WAI/ER/tests/xhtml/testfiles/resources/pdf/dummy.pdf",
-      latex: logic.mdToLatex(text),
-    },
-  });
+  const latex = logic.mdToLatex(text);
+  const id = await storage.compileLatex(latex);
+  res.json({ data: { id } });
+});
+
+app.all("/view/:id", (req, res) => {
+  const { id } = req.params;
+  const filePath = storage.getRealPath(id);
+  res.sendFile(filePath);
 });
 
 app.listen(3000, function () {

@@ -19,7 +19,10 @@ async function request(endpoint: string, body?: {}) {
 }
 
 export async function fetchPreview(text: string): Promise<Response> {
-  console.log(text);
   const json = await request("/convert", { text: text });
   return json;
+}
+
+export function viewUrl(id: string) {
+  return CONFIG.BACKEND + "/view/" + id;
 }

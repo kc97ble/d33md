@@ -1,0 +1,149 @@
+
+\ProvidesPackage{freecontest}
+
+\usepackage{verbatim}
+
+\binoppenalty=10000
+\relpenalty=10000
+\exhyphenpenalty=10000
+
+% -- Setup margins --
+
+\ifcase\@ptsize % 10 pt
+    \hoffset=-26.5mm
+    \voffset=-35mm
+    \textheight=250mm
+    \textwidth=175mm
+\or % 11 pt
+    \hoffset=-25mm
+    \voffset=-37.5mm
+    \textheight=255mm
+    \textwidth=175mm
+\or % 12 pt
+    \hoffset=-20mm
+    \voffset=-35mm
+    \textheight=245mm
+    \textwidth=175mm
+\fi
+
+% -- End of setup margins --
+
+% -- Setup sizes --
+\newlength{\exmpwidinf}
+\newlength{\exmpwidouf}
+\exmpwidinf=0.475\textwidth
+\exmpwidouf=0.475\textwidth
+
+\renewcommand{\t}[1]{\ifmmode{\mathtt{#1}}\else{\texttt{#1}}\fi}
+
+\parindent=0mm
+\parskip=1ex
+
+% -- End of setup sizes --
+
+% -- Problem sections --
+
+\def\heading#1{%
+    {%
+        \smallbreak\smallskip%
+        \noindent%
+        \bf%
+        \Large%
+        \textsf{#1}%
+    }%
+    \nopagebreak%
+    \par%
+    \smallskip%
+}
+
+% -- End of problem sections
+
+% -- Problem environment --
+
+\def\problemtitle#1{%
+    \bigskip%
+    \noindent%
+    \textbf{\LARGE\textsf{#1}}%
+    \nopagebreak%
+    \normalsize%
+    \bigskip%
+}
+
+\def\s@tm@cr@s{
+    \def\widthin##1{\exmpwidinf=##1\relax}
+    \def\widthout##1{\exmpwidouf=##1\relax}
+    \def\stretchin##1{\advance\exmpwidinf by ##1\relax}
+    \def\stretchout##1{\advance\exmpwidouf by ##1\relax}
+    \@ifstar{
+        \error Star must not be used in example environment any more
+    }
+}
+
+% This is magic, which delete space after verbatiminput
+\addto@hook{\every@verbatim}{\topsep=0pt\relax}
+
+% :FIXME:
+\newenvironment{example}[1][]{
+    \s@tm@cr@s#1
+    \ttfamily\obeylines\obeyspaces\frenchspacing
+    \newcommand{\exmp}[2]{
+        \begin{minipage}[t]{\exmpwidinf}\rightskip=0pt plus 1fill\relax##1\medskip\end{minipage}&
+        \begin{minipage}[t]{\exmpwidouf}\rightskip=0pt plus 1fill\relax##2\medskip\end{minipage}\\
+        \hline
+    }
+
+    \newcommand{\exmpfile}[2]{
+       \exmp{
+          \verbatiminput{##1}
+       }{
+          \verbatiminput{##2}
+       }%
+    }
+
+    \begin{tabular}{|l|l|}
+        \hline
+        \multicolumn{1}{|c|}{\bf\texttt{Sample Input}}&
+        \multicolumn{1}{|c|}{\bf\texttt{Sample Output}}\\
+        \hline
+}{
+    \end{tabular}
+}
+
+% -- End of problem environment --
+
+\newcommand{\theheader}{~}
+\DeclareRobustCommand{\header}[1]{\renewcommand{\theheader}{#1}}
+\newcommand{\thefooter}{~}
+\DeclareRobustCommand{\footer}[1]{\renewcommand{\thefooter}{#1}}
+
+\makeatletter
+
+\renewcommand{\@oddhead}{
+    \parbox{\textwidth}{
+        \sffamily
+        \begin{center}
+            \protect\theheader
+            \\[2pt]
+            \hrule
+        \end{center}
+    }
+}
+
+\renewcommand{\@oddfoot}{
+\gdef\problemletter{\if@arabic\arabic{problem}\else\Alph{problem}\fi}
+    \parbox{\textwidth}{
+        \hrule
+        \vspace{6pt}
+        \sffamily
+        \thefooter
+    }
+}
+
+\makeatother
+ 
+\headheight=2cm
+\headsep=6mm
+
+\hfuzz=0.5pt
+
+\sloppy
