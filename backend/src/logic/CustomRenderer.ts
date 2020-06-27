@@ -2,6 +2,54 @@ import marked from "marked";
 import * as utils from "../utils";
 import Advisor from "./Advisor";
 
+enum LatexMode {
+  None,
+  Text,
+  Math,
+  Code,
+}
+
+type SandwichOptions = {
+  unescape?: boolean;
+  latexMode?: LatexMode;
+};
+
+const DEFAULT_SANDWICH_OPTIONS: SandwichOptions = {
+  unescape: true,
+  latexMode: LatexMode.Text,
+};
+
+function sandwich(
+  leftText: string,
+  text: string,
+  rightText: string,
+  options: SandwichOptions = {}
+) {
+  const { unescape, latexMode } = {
+    ...DEFAULT_SANDWICH_OPTIONS,
+    ...options,
+  };
+  const unescapedText = unescape ? utils.unescape(text) : text;
+  const latexCode =
+    latexMode === LatexMode.Text
+      ? utils.sanitizeTextMode(unescapedText)
+      : latexMode === LatexMode.Math
+      ? utils.sanitizeMathMode(unescapedText)
+      : latexMode === LatexMode.Code
+      ? utils.sanitizeCodeMode(unescapedText)
+      : unescapedText;
+  return leftText + latexCode + rightText;
+}
+
+// similar to sandwich, but simpler
+function taco(leftText, text, rightText) {
+  return leftText + text + rightText;
+}
+
+function unimplemented(message: string) {
+  return "\n?? :D ?? " + message + " ?? :D ??\n";
+}
+
 export default class CustomRenderer extends marked.Renderer {
   advisor: Advisor;
 
@@ -9,113 +57,117 @@ export default class CustomRenderer extends marked.Renderer {
     super();
     this.advisor = advisor;
   }
-  // need to sanitize code
-  // TODO
-  code(
-    code: string,
-    language: string | undefined,
-    isEscaped: boolean
-  ): string {
-    // return `\\texttt{${utils.sanitizeTextMode(code)}}`; // TODO
+
+  code(code: string, _language: string | undefined, _isEscaped: boolean): string {
     const id = code;
-    const actualCode = utils.sanitizeCodeMode(
-      this.advisor.getCode(id)
-    );
+    const actualCode = this.advisor.getCode(id);
+    const OPTIONS = { unescape: false, latexMode: LatexMode.Code };
+
     if (this.advisor.isFirstInput(id)) {
-      return `\\begin{example}\n  \\exmp{%\n${actualCode}\n  }`;
+      return sandwich("\\begin{example}\n  \\exmp{%\n", actualCode, "\n  }", OPTIONS);
+    } else if (this.advisor.isInput(id)) {
+      return sandwich("\\exmp{%\n", actualCode, "\n  }", OPTIONS);
+    } else if (this.advisor.isLastOutput(id)) {
+      return sandwich("{%\n", actualCode, "\n  }%\n\\end{example}\n\n", OPTIONS);
+    } else if (this.advisor.isOutput(id)) {
+      return sandwich("{%\n", actualCode, "\n  }", OPTIONS);
+    } else {
+      return taco("\\begin{verbatim}\n", actualCode, "\n\\end{verbatim}\n\n");
     }
-    if (this.advisor.isInput(id)) {
-      return `\\exmp{%\n${actualCode}\n  }`;
-    }
-    if (this.advisor.isLastOutput(id)) {
-      return `{%\n${actualCode}\n  }%\n\\end{example}\n\n`;
-    }
-    if (this.advisor.isOutput(id)) {
-      return `{%\n${actualCode}\n  }`;
-    }
-    return `\\texttt{${utils.sanitizeTextMode(actualCode)}}`;
   }
 
   blockquote(quote: string): string {
-    return `\\begin{quote}${quote}\\end{quote}`;
+    return taco("\\begin{quote}", quote, "\\end{quote}");
   }
 
-  html(html: string): string {
-    return "?? :D ??";
+  html(_html: string): string {
+    return unimplemented("HTML is not supported.");
   }
 
   heading(
     text: string,
     level: 1 | 2 | 3 | 4 | 5 | 6,
-    raw: string,
-    slugger: marked.Slugger
+    _raw: string,
+    _slugger: marked.Slugger
   ): string {
+    const OPTIONS: SandwichOptions = { unescape: false, latexMode: LatexMode.None };
     if (level === 1) {
-      return `\\problemtitle{${text}}\n\n`;
+      return taco("\\problemtitle{", text, "}\n\n");
     } else if (level === 2) {
-      return `\\heading{${text}}\n\n`;
+      return taco("\\heading{", text, "}\n\n");
+    } else if (level === 3) {
+      return taco("\\subsubsection*{", text, "}\n\n"); // TODO: for future use
+    } else if (level === 4) {
+      return taco("\\paragraph*{", text, "}\n\n"); // TODO: for future use
+    } else if (level === 5) {
+      return taco("\\subparagraph*{", text, "}\n\n"); // TODO: for future use
     } else {
-      return "?? :D ??";
+      return unimplemented("H6 is not supported.");
     }
   }
 
   // use hr as page break
   hr(): string {
-    return "\\pagebreak";
+    return "\\pagebreak\n\n";
   }
 
-  list(body: string, ordered: boolean, start: number): string {
-    return ordered
-      ? `\\begin{enumerate}\n${body}\n\\end{enumerate}\n\n`
-      : `\\begin{itemize}\n${body}\n\\end{itemize}\n\n`;
+  list(body: string, ordered: boolean, _start: number): string {
+    const tag = ordered ? "enumerate" : "itemize";
+    return taco("\\begin{" + tag + "}\n", body, "\n\\end{" + tag + "}\n\n");
   }
 
   listitem(text: string): string {
-    return `\\item ${text}\n`;
+    return taco("\\item ", text, "\n");
   }
 
-  // checkbox is not supported
+  // \usepackage{amssymb}
   checkbox(checked: boolean): string {
-    return "?? :D ??";
+    return !checked ? "$\\square$" : "$\\boxtimes$";
   }
 
   paragraph(text: string): string {
-    return `${text}\n\n`;
+    return taco("", text, "\n\n");
   }
 
-  // table are not supported
-  table(header: string, body: string): string {
-    return "?? :D ??";
+  table(_header: string, _body: string): string {
+    return unimplemented(
+      "Table is not supported. Please use `$ ... latex code ... $` instead."
+    );
   }
-  tablerow(content: string): string {
-    return "?? :D ??";
+
+  tablerow(_content: string): string {
+    return unimplemented(
+      "Table is not supported. Please use `$ ... latex code ... $` instead."
+    );
   }
+
   tablecell(
-    content: string,
-    flags: {
+    _content: string,
+    _flags: {
       header: boolean;
       align: "center" | "left" | "right" | null;
     }
   ): string {
-    return "?? :D ??";
+    return unimplemented(
+      "Table is not supported. Please use `$ ... latex code ... $` instead."
+    );
   }
 
   strong(text: string): string {
-    return `\\textbf{${text}}`;
+    return taco("\\textbf{", text, "}");
   }
 
   em(text: string): string {
-    return `\\emph{${text}}`;
+    return taco("\\emph{", text, "}");
   }
 
-  // TODO: probably use token.raw
   codespan(code: string): string {
     const unescaped = utils.unescape(code);
-    const matched = unescaped.match(/^\$(.*)\$$/);
-    if (matched) {
-      return `$${matched[1]}$`;
+    const m = unescaped.match(/^\$(.*)\$$/);
+    if (m) {
+      return `$${m[1]}$`;
     } else {
-      return `$${utils.latexize(unescaped)}$`;
+      return taco("$", utils.latexize(unescaped), "$");
     }
   }
 
@@ -125,29 +177,20 @@ export default class CustomRenderer extends marked.Renderer {
 
   // \usepackage[normalem]{ulem}
   del(text: string): string {
-    return `\\sout{${text}}`;
+    return taco("\\sout{", text, "}");
   }
 
   // \usepackage{hyperref}
-  link(
-    href: string | null,
-    title: string | null,
-    text: string
-  ): string {
+  link(href: string | null, _title: string | null, text: string): string {
     return `\\href{${href}}{${text}}`;
   }
 
   // image is not supported
-  image(
-    href: string | null,
-    title: string | null,
-    text: string
-  ): string {
-    return "?? :D ??";
+  image(href: string | null, title: string | null, text: string): string {
+    return unimplemented("Image is not supported. There is no workaround yet.");
   }
 
-  // text has to sanitized
   text(text: string): string {
-    return `${utils.sanitizeTextMode(text)}`;
+    return sandwich("", text, "");
   }
 }

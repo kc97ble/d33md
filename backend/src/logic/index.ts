@@ -15,9 +15,7 @@ class Preprocessor implements Advisor {
       this.codes[id] = {
         ...token,
         hasNext: false,
-        index: !!this.lastCodeToken
-          ? this.lastCodeToken.index + 1
-          : 0,
+        index: !!this.lastCodeToken ? this.lastCodeToken.index + 1 : 0,
       };
       if (!!this.lastCodeToken) {
         this.lastCodeToken.hasNext = true;
@@ -34,8 +32,11 @@ class Preprocessor implements Advisor {
     if (this.types.has("del")) {
       result.push("\\usepackage[normalem]{ulem}");
     }
-    if (this.types.has("href")) {
+    if (this.types.has("link")) {
       result.push("\\usepackage{hyperref}");
+    }
+    if (this.types.has("checkbox")) {
+      result.push("\\usepackage{amssymb}");
     }
     return result;
   }
@@ -96,44 +97,121 @@ ${body}
 `;
 }
 
-// console.log(
-//   mdToLatex(`
-// # ACCEPTED
-// **Tí** và *Sửu* mới tập code. ~Vì vậy~, code để biên dịch được đã khó, code để bài nộp đạt yêu cầu còn khó hơn. Hôm nay, thầy Dần cho Tí và Sửu \`N\` bài tập. Bài tập thứ \`i\` có giá trị điểm bằng \`a[i]\`. Điểm số của mỗi người sẽ bằng tổng giá trị điểm của các bài tập mà người đó làm được. Vì không muốn bị phạt, Tí và Sửu tìm đến Mão nhờ sự trợ giúp.
+const TEST1 = `
 
-// Mão đặt vào một chiếc hộp đen \`N\` lá thăm, ghi các số từ \`1\` đến \`N\` và không có hai lá thăm nào ghi cùng số. Tí và Sửu sẽ lần lượt bốc ngẫu nhiên một lá thăm trong chiếc hộp đen. Sau khi bốc được một lá thăm ghi số \`X\`, Mão sẽ code cho người rút được lá thăm này bài tập \`X\`. Tí và Sửu sẽ thay phiên nhau bốc các lá thăm cho đến khi chiếc hộp đen không còn lá thăm nào.
-// Hãy tìm chênh lệch điểm tối đa giữa Tí và Sửu.
 
-// ## Dữ liệu
+Heading 1
+======
 
-// - Dòng đầu tiên chứa số nguyên \`N\`, là số lượng bài tập \`(1 <= N <= 50)\`.
-// - Dòng thứ hai chứa \`N\` số nguyên \`a_1, a_2, ..., a_N (1 <= a_i <= 50)\`, là điểm số của các bài tập.
+Heading 2
+------
 
-// ## Kết quả
+### H3  #include <stdio.h>
+#### H4  #include <stdio.h>
+##### H5  #include <stdio.h>
+###### H6  #include <stdio.h>
 
-// In ra chênh lệch điểm tối đa giữa Tí và Sửu.
+Emphasis, aka italics, with *#include <stdio.h>* or _#include <stdio.h>_.
 
-// ## Ví dụ
+Strong emphasis, aka bold, with **#include <stdio.h>** or __#include <stdio.h>__.
 
-// \`\`\`
-// 1 2
-// \`\`\`
-// \`\`\`
-// 3 4
-// \`\`\`
-// \`\`\`
-// 5 6
-// \`\`\`
-// \`\`\`
-// 7 8
-// \`\`\`
+Combined emphasis with **asterisks and _#include <stdio.h>_**.
 
-// hmm
+Strikethrough uses two tildes. ~~#include <stdio.h>~~
 
-// hmm
+1. #include <stdio.h>
+2. Another item
+  * #include <stdio.h>. 
+1. Actual numbers don't matter, just that it's a number
+  1. #include <stdio.h>
+4. And another item.
 
-// \`\`\`
-// 9 0
-// \`\`\`
-// `)
-// );
+   You can have properly indented paragraphs within list items. Notice the blank line above, and the leading spaces (at least one, but we'll use three here to also align the raw Markdown).
+
+   To have a line break without a paragraph, you will need to use two trailing spaces.  
+   Note that this line is separate, but within the same paragraph.  
+   (This is contrary to the typical GFM line break behaviour, where trailing spaces are not required.)  
+   #include <stdio.h>
+
+* Unordered list can use asterisks #include <stdio.h>
+- Or minuses #include <stdio.h>
++ Or pluses #include <stdio.h>
+
+[I'm an inline-style link#](https://www.google.com/%22)
+
+[I'm an inline-style link with title#](https://www.google.com# "Google's Homepage#")
+
+[I'm a reference-style link#][Arbitrary case-insensitive reference text]
+
+[I'm a relative reference to a repository file#](../blob/master/LICENSE#)
+
+[You can use numbers for reference-style link definitions][1]
+
+Or leave it empty and use the [link text itself].
+
+URLs and URLs in angle brackets will automatically get turned into links. 
+http://www.example.com or <http://www.example.com> and sometimes 
+example.com (but not on Github, for example).
+
+Some text to show that the reference links can follow later.
+
+[arbitrary case-insensitive reference text]: https://www.mozilla.org
+[1]: http://slashdot.org
+[link text itself]: http://www.reddit.com
+
+Inline \`$\\texttt{code}$\` has \`back-ticks #include <stdio.h> around\` it.
+
+\`\`\`javascript
+var s = "JavaScript syntax highlighting";
+#include <stdio.h>
+alert(s);
+\`\`\`
+
+hmm
+ 
+\`\`\`python
+s = "Python syntax highlighting"
+#include <stdio.h>
+print s
+\`\`\`
+
+hmm
+ 
+\`\`\`
+No language indicated, so no syntax highlighting. 
+But let's throw in a <b>tag</b>.
+\`\`\`
+
+> Blockquotes are very handy in email to emulate reply text. #include <stdio.h>
+> This line is part of the same quote.
+
+Quote break.
+
+> This is a very long line that will still be quoted properly when it wraps. Oh boy let's keep writing to make sure this is long enough to actually wrap for everyone. Oh, you can *put* **Markdown** into a blockquote.  #include <stdio.h>
+
+Three or more...
+
+---
+
+Hyphens
+
+***
+
+Asterisks
+
+___
+
+Underscores
+
+Here's a line for us to start with.
+
+This line is separated from the one above by two newlines, so it will be a *separate #include <stdio.h> paragraph*.
+
+This line is also a separate paragraph, but... #include <stdio.h>
+This line is only separated by a single newline, so it's a separate line in the *same #include <stdio.h> paragraph*.
+
+`;
+
+console.log(mdToLatex(TEST1));
+import * as utils from "../utils";
+console.log(utils.sanitizeTextMode("####"));

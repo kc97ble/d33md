@@ -1,9 +1,9 @@
 :local {
   .container {
-    border: 1px solid red;
     display: flex;
   }
   .textarea {
+    font-family: "Courier New", Courier, monospace;
     flex: 1 1 0;
   }
 }

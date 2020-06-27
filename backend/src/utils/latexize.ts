@@ -22,13 +22,6 @@ const SANITIZE_TEXT_MODE = {
   // "`": "\textasciigrave{}",
 };
 
-export function sanitizeTextMode(s: string): string {
-  s.replace(/[\\{}$&#^_~%<>|"'`]/, function (matched) {
-    return SANITIZE_TEXT_MODE[matched] || matched;
-  });
-  return s;
-}
-
 const SANITIZE_MATH_MODE = {
   // "\\": "\\textbackslash{}",
   "{": "\\{",
@@ -48,14 +41,18 @@ const SANITIZE_MATH_MODE = {
   // "`": "\textasciigrave{}",
 };
 
+export function sanitizeTextMode(s: string): string {
+  // TODO: test
+  return s.replace(/[\\{}$&#^_~%<>|"'`]/g, (char) => SANITIZE_TEXT_MODE[char] || char);
+}
+
 export function sanitizeMathMode(s: string): string {
-  s.replace(/[\\{}$&#^_~%<>|"'`]/, function (matched) {
-    return SANITIZE_TEXT_MODE[matched] || matched;
-  });
-  return s;
+  // TODO: test
+  return s.replace(/[\\{}$&#^_~%<>|"'`]/g, (char) => SANITIZE_MATH_MODE[char] || char);
 }
 
 export function sanitizeCodeMode(s: string): string {
+  // TODO: test
   return s;
 }
 
@@ -162,10 +159,7 @@ function rule5(text: string): Tree {
     if (role[i] != role[i + 1]) {
       return {
         type: "concat",
-        children: [
-          rule6(text.substring(0, i + 1)),
-          rule5(text.substring(i + 1)),
-        ],
+        children: [rule6(text.substring(0, i + 1)), rule5(text.substring(i + 1))],
       };
     }
   }
@@ -224,9 +218,7 @@ function treeToLatex(node: Tree): string {
   if (node.type === "literal") {
     return opToLatex(node.children as string);
   } else if (node.type === "concat") {
-    return (node.children as Array<Tree>)
-      .map((child) => treeToLatex(child))
-      .join(" ");
+    return (node.children as Array<Tree>).map((child) => treeToLatex(child)).join(" ");
   } else if (node.type === "relation") {
     return [
       treeToLatex((node.children as Array<Tree>)[0]),

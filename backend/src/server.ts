@@ -13,16 +13,20 @@ app.get("/", function (req, res) {
 });
 
 app.all("/convert", async (req, res) => {
-  const { text } = req.body;
-  const latex = logic.mdToLatex(text);
-  const id = await storage.compileLatex(latex);
-  res.json({ data: { id } });
+  try {
+    const { text } = req.body;
+    const latex = logic.mdToLatex(text);
+    const id = await storage.compileLatex(latex);
+    res.json({ data: { id } });
+  } catch (e) {
+    res.json({ error: e.toString() });
+  }
 });
 
 app.all("/view/:id", (req, res) => {
   const { id } = req.params;
   const filePath = storage.getRealPath(id);
-  res.sendFile(filePath);
+  res.sendFile(filePath, (e) => e && res.json({ error: e.toString() }));
 });
 
 app.listen(3000, function () {
