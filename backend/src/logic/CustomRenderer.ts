@@ -108,10 +108,15 @@ export default class CustomRenderer extends marked.Renderer {
     return `\\emph{${text}}`;
   }
 
-  // probably use token.raw
+  // TODO: probably use token.raw
   codespan(code: string): string {
     const unescaped = utils.unescape(code);
-    return `$${utils.latexize(unescaped)}$`;
+    const matched = unescaped.match(/^\$(.*)\$$/);
+    if (matched) {
+      return `$${matched[1]}$`;
+    } else {
+      return `$${utils.latexize(unescaped)}$`;
+    }
   }
 
   br(): string {

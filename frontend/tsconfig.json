@@ -7,6 +7,7 @@
     "target": "ES6",
     "jsx": "react",
     "baseUrl": ".",
+    "esModuleInterop": true,
     "paths": {
       "@d33md/config": ["config.js", "config.example.js"]
     }
