@@ -65,5 +65,6 @@ module.exports = {
       index: "/index.html",
       disableDotRule: true,
     },
+    port: 8002,
   },
 };
