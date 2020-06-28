@@ -1,0 +1,31 @@
+:local {
+  .subMenu {
+    display: flex;
+    flex-direction: column;
+    width: max-content;
+    height: max-content;
+  }
+
+  .subMenuBottom {
+    position: absolute;
+    top: 100%;
+    left: 0;
+  }
+
+  .subMenuRight {
+    position: absolute;
+    top: 0;
+    left: 100%;
+  }
+
+  .subMenuStatic {
+    position: static;
+  }
+
+  .mainMenu {
+    display: flex;
+    flex-direction: row;
+    width: max-content;
+    height: max-content;
+  }
+}
