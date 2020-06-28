@@ -12,6 +12,7 @@ module.exports = {
     extensions: [".ts", ".tsx", ".js", ".jsx"],
     alias: {
       "@d33md/config": path.resolve(__dirname, "config.js"),
+      src: path.resolve(__dirname, "src"),
     },
   },
   module: {

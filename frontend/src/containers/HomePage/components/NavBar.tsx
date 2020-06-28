@@ -1,15 +1,14 @@
 import * as React from "react";
 
-import PureNavBar from "../../../controls/NavBar";
-import { MainMenu } from "../../../controls/MenuV2";
-import styles from "./NavBar.scss";
+import PureNavBar from "src/controls/NavBar";
+import { MainMenu } from "src/controls/MenuV2";
 
 type Props = {
   refresh: () => void;
 };
 
 function ProductLogo() {
-  return <div className={styles.productLogo}>D33MD</div>;
+  return <div className={"logo"}>D33MD</div>;
 }
 
 export default function NavBar(props: Props) {
@@ -18,7 +17,22 @@ export default function NavBar(props: Props) {
     <PureNavBar
       main={<ProductLogo />}
       right={
-        <MainMenu items={[{ text: "Refresh", onClick: refresh }, { text: "Export" }]} />
+        <MainMenu
+          items={[
+            {
+              text: "Settings",
+              subMenu: {
+                items: [
+                  { text: "Editor setting..." },
+                  { text: "Layout setting..." },
+                  { text: "Preview setting..." },
+                ],
+              },
+            },
+            { text: "Refresh", onClick: refresh },
+            { text: "Export" },
+          ]}
+        />
       }
     />
   );

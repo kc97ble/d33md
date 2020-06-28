@@ -1,0 +1,9 @@
+header button {
+  top: auto;
+}
+
+header {
+  overflow-x: visible;
+  overflow-y: visible;
+  height: auto;
+}
