@@ -1,29 +1,29 @@
 import * as React from "react";
 import { EditorProps } from "src/types";
-import { withBuffer } from "./withBuffer";
-import type { WithBufferProps } from "./withBuffer";
-import { withSelector } from "./withSelector";
+import { withBuffer } from "../../../../controls/withBuffer";
+import type { WithBufferProps } from "../../../../controls/withBuffer";
+import { withSelector } from "../../../../controls/withSelector";
 import { getMetadata, setMetadata } from "src/utils/metadata";
 import type { Metadata } from "src/utils/metadata";
-import { withDialog } from "src/controls/Dialog";
+import { withDialog } from "src/controls/withDialog";
 
-type EditorOptions = {
+type LayoutSetting = {
   fontSize: string;
 };
 
-function getEditorOptions(text: string): EditorOptions {
+function getLayoutSetting(text: string): LayoutSetting {
   const m = getMetadata(text);
   return {
     fontSize: m.get("fontSize"),
   };
 }
 
-function setEditorOptions(editorOptions: EditorOptions, text: string): string {
-  const m = new Map([["fontSize", editorOptions.fontSize]]);
+function setLayoutSetting(layoutSetting: LayoutSetting, text: string): string {
+  const m = new Map([["fontSize", layoutSetting.fontSize]]);
   return setMetadata(text, m);
 }
 
-function EditorOptionsDialog(props: EditorProps<EditorOptions> & WithBufferProps) {
+function LayoutSettingDialog(props: EditorProps<LayoutSetting> & WithBufferProps) {
   const { value, onChange, name, save } = props;
 
   function onFieldChange(event: React.ChangeEvent<HTMLInputElement>) {
@@ -49,7 +49,7 @@ function EditorOptionsDialog(props: EditorProps<EditorOptions> & WithBufferProps
 
 export default withDialog(
   withSelector(
-    getEditorOptions,
-    setEditorOptions
-  )(withBuffer<EditorOptions>()(EditorOptionsDialog))
+    getLayoutSetting,
+    setLayoutSetting
+  )(withBuffer<LayoutSetting>()(LayoutSettingDialog))
 );

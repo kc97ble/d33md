@@ -163,9 +163,13 @@ export default class CustomRenderer extends marked.Renderer {
 
   codespan(code: string): string {
     const unescaped = utils.unescape(code);
-    const m = unescaped.match(/^\$(.*)\$$/);
-    if (m) {
+    let m = null;
+    if ((m = unescaped.match(/^\$(.*)\$$/))) {
       return `$${m[1]}$`;
+    } else if ((m = unescaped.match(/^\"(.*)\"$/))) {
+      return taco("\\texttt{", utils.sanitizeTextMode(m[1]), "}");
+    } else if ((m = unescaped.match(/^\'(.*)\'$/))) {
+      return taco("\\texttt{", utils.sanitizeTextMode(m[1]), "}");
     } else {
       return taco("$", utils.latexize(unescaped), "$");
     }

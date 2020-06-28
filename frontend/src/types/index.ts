@@ -10,3 +10,5 @@ export type EditorProps<V> = {
   value: V;
   onChange: OnChange<V>;
 };
+
+export * from "./settings";

@@ -212,6 +212,6 @@ This line is only separated by a single newline, so it's a separate line in the 
 
 `;
 
-console.log(mdToLatex(TEST1));
-import * as utils from "../utils";
-console.log(utils.sanitizeTextMode("####"));
+// console.log(mdToLatex(TEST1));
+// import * as utils from "../utils";
+// console.log(utils.sanitizeTextMode("####"));

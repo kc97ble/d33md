@@ -37,7 +37,7 @@ export async function createSelfDestructingFolder(
   return folderPath;
 }
 
-type RunResult = { code: number; signal: string };
+type RunResult = { code: number; signal: string; stdoutData: string; stderrData: string };
 
 function run(executable, args, options): Promise<RunResult> {
   return new Promise((resolve, reject) => {
@@ -49,9 +49,19 @@ function run(executable, args, options): Promise<RunResult> {
         console.debug({ error, stdout, stderr });
       }
     );
+    let stdoutData = "";
+    let stderrData = "";
+
     process.stdin.end();
+    process.stdout.on("data", (data) => {
+      stdoutData += data;
+    });
+    process.stderr.on("data", (data) => {
+      stderrData += data;
+    });
+
     process.on("exit", (code, signal) => {
-      resolve({ code, signal });
+      resolve({ code, signal, stdoutData, stderrData });
     });
     process.on("error", (err: Error) => reject(err));
   });
@@ -65,15 +75,15 @@ export async function compileLatex(text: string): Promise<string> {
   const pdfFilePath = path.join(folderPath, "file.pdf");
   await writeFile(texFilePath, text);
   await copyFile(STYLE_FILE, styFilePath);
-  const { code, signal } = await run(PDFLATEX, [texFilePath], {
+  const runResult = await run(PDFLATEX, [texFilePath], {
     cwd: folderPath,
   });
-  if (code === 0) {
+  if (runResult.code === 0) {
     const id = uuid.v1();
     files[id] = pdfFilePath;
     return id;
   } else {
-    throw Error("?? :D ??");
+    throw Error(JSON.stringify(runResult, null, 4));
   }
 }
 

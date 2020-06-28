@@ -4,7 +4,8 @@ import PureNavBar from "src/controls/NavBar";
 import { MainMenu } from "src/controls/MenuV2";
 
 export enum DialogType {
-  EditorOptions,
+  EditorSetting,
+  LayoutSetting,
 }
 
 type Props = {
@@ -31,9 +32,12 @@ export default function NavBar(props: Props) {
                 items: [
                   {
                     text: "Editor setting...",
-                    onClick: () => setDialog(DialogType.EditorOptions),
+                    onClick: () => setDialog(DialogType.EditorSetting),
                   },
-                  { text: "Layout setting..." },
+                  {
+                    text: "Layout setting...",
+                    onClick: () => setDialog(DialogType.LayoutSetting),
+                  },
                   { text: "Preview setting..." },
                 ],
               },

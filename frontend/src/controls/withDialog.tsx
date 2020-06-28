@@ -1,7 +1,5 @@
 import * as React from "react";
 
-import styles from "./style.scss";
-
 type withDialogProps = {
   onClose: () => void;
 };
@@ -13,7 +11,6 @@ export function withDialog<P>(WrappedComponent: React.ComponentType<P>) {
       const { onClose, ...otherProps } = this.props;
       return (
         <>
-          <label htmlFor="modal-control">Show modal</label>
           <input
             type="checkbox"
             id={this.id}
@@ -22,7 +19,7 @@ export function withDialog<P>(WrappedComponent: React.ComponentType<P>) {
             onChange={() => onClose()}
           />
           <div>
-            <div className="card">
+            <div className="card large">
               <label htmlFor={this.id} className="modal-close"></label>
               <h3 className="section">Modal</h3>
               <div className="section">
