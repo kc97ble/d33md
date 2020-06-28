@@ -1,12 +1,14 @@
 import express from "express";
 import cors from "cors";
-import * as logic from "./logic";
-import * as storage from "./storage";
+import logger from "./logger";
+import * as logic from "../logic";
+import * as storage from "../storage";
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(logger);
 
 app.get("/", function (req, res) {
   res.send("Hello World!");
