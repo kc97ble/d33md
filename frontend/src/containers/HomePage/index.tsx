@@ -21,10 +21,19 @@ export default function HomePage() {
     }
   };
 
+  const download = async () => {
+    const res = await api.fetchPreview(text);
+    if (res.error) {
+      alert(JSON.stringify(res));
+    } else {
+      api.download(res.data.id);
+    }
+  };
+
   return (
     <div className={styles.page}>
       <header>
-        <NavBar refresh={refresh} />
+        <NavBar refresh={refresh} download={download} />
       </header>
       <main className={styles.main}>
         <div className={styles.container}>

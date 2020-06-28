@@ -26,3 +26,7 @@ export async function fetchPreview(text: string): Promise<Response> {
 export function viewUrl(id: string) {
   return CONFIG.BACKEND + "/view/" + id;
 }
+
+export function download(id: string) {
+  window.location.href = CONFIG.BACKEND + "/download/" + id;
+}

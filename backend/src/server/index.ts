@@ -31,6 +31,12 @@ app.all("/view/:id", (req, res) => {
   res.sendFile(filePath, (e) => e && res.json({ error: e.toString() }));
 });
 
+app.all("/download/:id", (req, res) => {
+  const { id } = req.params;
+  const filePath = storage.getRealPath(id);
+  res.download(filePath, (e) => e && res.json({ error: e.toString() }));
+});
+
 app.listen(3000, function () {
   console.log("App is listening on port 3000!!!!!");
 });

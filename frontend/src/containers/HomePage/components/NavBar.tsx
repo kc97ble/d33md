@@ -5,6 +5,7 @@ import { MainMenu } from "src/controls/MenuV2";
 
 type Props = {
   refresh: () => void;
+  download: () => void;
 };
 
 function ProductLogo() {
@@ -12,7 +13,7 @@ function ProductLogo() {
 }
 
 export default function NavBar(props: Props) {
-  const { refresh } = props;
+  const { refresh, download } = props;
   return (
     <PureNavBar
       main={<ProductLogo />}
@@ -30,7 +31,7 @@ export default function NavBar(props: Props) {
               },
             },
             { text: "Refresh", onClick: refresh },
-            { text: "Export" },
+            { text: "Export", onClick: download },
           ]}
         />
       }
