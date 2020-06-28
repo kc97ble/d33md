@@ -11,9 +11,10 @@ import styles from "./style.scss";
 import EditorSettingsDialog from "./components/EditorSettingsDialog";
 import { EditorSettings, DEFAULT_EDITOR_SETTINGS } from "src/types";
 import ErrorPanel from "./components/ErrorPanel";
+import DEFAULT_MARKDOWN_TEXT from "./defaultMarkdownText";
 
 export default function HomePage() {
-  const [text, setText] = React.useState(""); // TODO: to be replaced
+  const [text, setText] = React.useState(DEFAULT_MARKDOWN_TEXT);
   const [preview, setPreview] = React.useState("");
   const [errorText, setErrorText] = React.useState(null);
   const [dialog, setDialog] = React.useState(null);
