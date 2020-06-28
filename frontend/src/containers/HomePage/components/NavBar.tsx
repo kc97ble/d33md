@@ -3,9 +3,14 @@ import * as React from "react";
 import PureNavBar from "src/controls/NavBar";
 import { MainMenu } from "src/controls/MenuV2";
 
+export enum DialogType {
+  EditorOptions,
+}
+
 type Props = {
   refresh: () => void;
   download: () => void;
+  setDialog: (dialog: DialogType) => void;
 };
 
 function ProductLogo() {
@@ -13,7 +18,7 @@ function ProductLogo() {
 }
 
 export default function NavBar(props: Props) {
-  const { refresh, download } = props;
+  const { refresh, download, setDialog } = props;
   return (
     <PureNavBar
       main={<ProductLogo />}
@@ -24,7 +29,10 @@ export default function NavBar(props: Props) {
               text: "Settings",
               subMenu: {
                 items: [
-                  { text: "Editor setting..." },
+                  {
+                    text: "Editor setting...",
+                    onClick: () => setDialog(DialogType.EditorOptions),
+                  },
                   { text: "Layout setting..." },
                   { text: "Preview setting..." },
                 ],

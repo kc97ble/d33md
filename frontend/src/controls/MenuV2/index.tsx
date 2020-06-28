@@ -57,7 +57,6 @@ export function SubMenu(props: SubMenuProps) {
 
 export function MenuItem(props: MenuItemProps) {
   const { text, subMenu = null, active, setActive, closeMenu, onClick } = props;
-  console.log(subMenu, active, setActive);
 
   const handleClick = () => {
     !!onClick && onClick();

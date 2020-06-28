@@ -1,16 +1,21 @@
 import * as React from "react";
 import cx from "classnames";
 
-import MarkDownEditor from "../../editors/MarkDownEditor";
-import PreviewPanel from "../components/PreviewPanel";
+import MarkDownEditor from "./components/MarkDownEditor";
+import PreviewPanel from "./components/PreviewPanel";
 import * as api from "../../api";
 import styles from "./style.scss";
 import { MainMenu } from "../../controls/MenuV2";
-import NavBar from "./components/NavBar";
+import NavBar, { DialogType } from "./components/NavBar";
+import { withDialog } from "src/controls/Dialog";
+import EditorOptions from "./components/EditorOptions";
+
+const EditorOptionsDialog = withDialog(EditorOptions);
 
 export default function HomePage() {
   const [text, setText] = React.useState(""); // TODO: to be replaced
   const [preview, setPreview] = React.useState("");
+  const [dialog, setDialog] = React.useState(null);
 
   const refresh = async () => {
     const res = await api.fetchPreview(text);
@@ -33,7 +38,7 @@ export default function HomePage() {
   return (
     <div className={styles.page}>
       <header>
-        <NavBar refresh={refresh} download={download} />
+        <NavBar refresh={refresh} download={download} setDialog={setDialog} />
       </header>
       <main className={styles.main}>
         <div className={styles.container}>
@@ -47,6 +52,9 @@ export default function HomePage() {
           />
           <PreviewPanel className={styles.preview} id={preview} />
         </div>
+        {dialog === DialogType.EditorOptions && (
+          <EditorOptionsDialog onClose={() => setDialog(null)} />
+        )}
       </main>
     </div>
   );

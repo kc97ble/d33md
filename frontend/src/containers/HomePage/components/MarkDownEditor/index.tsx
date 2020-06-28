@@ -22,9 +22,7 @@ export default function MarkDownEditor(props: Props) {
   }, []);
   return (
     <div className={cx(className, styles.container)}>
-      <textarea className={styles.textarea} onInput={onValueChange}>
-        {value}
-      </textarea>
+      <textarea className={styles.textarea} onInput={onValueChange} value={value} />
     </div>
   );
 }
