@@ -1,16 +1,13 @@
 import * as React from "react";
-import cx from "classnames";
+
+import * as api from "src/api";
+import type { ChangeEvent } from "src/types";
 
 import MarkDownEditor from "./components/MarkDownEditor";
 import PreviewPanel from "./components/PreviewPanel";
-import * as api from "../../api";
-import styles from "./style.scss";
-import { MainMenu } from "../../controls/MenuV2";
 import NavBar, { DialogType } from "./components/NavBar";
-import { withDialog } from "src/controls/Dialog";
-import EditorOptions from "./components/EditorOptions";
-
-const EditorOptionsDialog = withDialog(EditorOptions);
+import EditorOptionsDialog from "./components/EditorOptions";
+import styles from "./style.scss";
 
 export default function HomePage() {
   const [text, setText] = React.useState(""); // TODO: to be replaced
@@ -35,6 +32,10 @@ export default function HomePage() {
     }
   };
 
+  const onChange = (e: ChangeEvent<string>) => {
+    setText(e.newValue);
+  };
+
   return (
     <div className={styles.page}>
       <header>
@@ -46,14 +47,17 @@ export default function HomePage() {
             className={styles.editor}
             name="text"
             value={text}
-            onChange={(e) => {
-              setText(e.newValue);
-            }}
+            onChange={onChange}
           />
           <PreviewPanel className={styles.preview} id={preview} />
         </div>
         {dialog === DialogType.EditorOptions && (
-          <EditorOptionsDialog onClose={() => setDialog(null)} />
+          <EditorOptionsDialog
+            onClose={() => setDialog(null)}
+            name=""
+            value={text}
+            onChange={onChange}
+          />
         )}
       </main>
     </div>

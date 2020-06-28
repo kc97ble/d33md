@@ -6,8 +6,8 @@ type withDialogProps = {
   onClose: () => void;
 };
 
-export function withDialog(WrappedComponent: React.ComponentType) {
-  return class extends React.Component<withDialogProps> {
+export function withDialog<P>(WrappedComponent: React.ComponentType<P>) {
+  return class extends React.Component<withDialogProps & P> {
     id: string = Math.random().toString();
     render() {
       const { onClose, ...otherProps } = this.props;
@@ -26,7 +26,7 @@ export function withDialog(WrappedComponent: React.ComponentType) {
               <label htmlFor={this.id} className="modal-close"></label>
               <h3 className="section">Modal</h3>
               <div className="section">
-                <WrappedComponent {...otherProps} />
+                <WrappedComponent {...(otherProps as P)} />
               </div>
             </div>
           </div>

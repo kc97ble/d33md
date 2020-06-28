@@ -1,13 +1,8 @@
 import * as React from "react";
 import styles from "./style.scss";
 import cx from "classnames";
+import type { OnChange } from "src/types";
 
-type ChangeEvent<V> = {
-  name: string;
-  newValue: V;
-};
-
-type OnChange<V> = (event: ChangeEvent<V>) => void;
 type Props = {
   className?: string;
   name: string;
