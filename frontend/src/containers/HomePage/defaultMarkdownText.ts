@@ -97,4 +97,67 @@ FoxCiel
 
 Ở ví dụ thứ hai, bảng điện tử luôn hiện số 0. Sau hai lượt của mỗi người, Fox Ciel không còn bài
 và thua.
+
+---
+
+# CARDRM
+
+\`N\` quân bài được đặt trên mặt bàn thành một dãy từ trái qua phải. Mỗi quân bài chứa ba chữ
+cái in hoa đôi một phân biệt.
+
+Ta gọi độ tương thích của hai lá bài là số lượng chữ cái cùng xuất hiện trong cả hai lá. Ví dụ:
+
+- \`'ABC'\` và \`'ACD'\` có độ tương thích là 2
+- \`'ABC'\` và \`'DFE'\` có độ tương thích là 0
+
+Bạn muốn lấy đi một số lá bài. Điều kiện để lấy đi một lá bài \`X\` là như sau:
+
+- \`X\` không phải lá bài đầu tiên hay lá bài cuối cùng.
+- Độ tương thích của lá bài kề trái \`X\` và lá bài kề phải \`X\` phải lớn hơn hoặc bằng 2.
+
+Sau khi lấy đi lá bài \`X\`, hai lá bài kề \`X\` trước đó trở thành kề với nhau.
+
+Xác định số lượng lá bài tối đa bạn có thể lấy ra. Lưu ý: các lá bài được xếp thành một dãy, nên
+lá bài đầu tiên và cuối cùng không được tính là kề nhau.
+
+## Dữ liệu
+
+- Dòng đầu tiên chứa số nguyên dương \`N\`, là độ dài của dãy bài (\`1 <= N <= 50\`).
+- \`N\` dòng tiếp theo, mỗi dòng chứa một xâu gồm ba chữ cái in hoa phân biệt, mô tả một lá
+bài.
+
+## Kết quả
+- In ra số lá bài lớn nhất có thể được lấy ra.
+
+## Ví dụ
+
+\`\`\`
+5
+ABC
+CDE
+ABC
+CDE
+ABC
+\`\`\`
+
+\`\`\`
+3
+\`\`\`
+
+\`\`\`
+5
+ADR
+FDB
+ABC
+CDE
+ABD
+\`\`\`
+
+\`\`\`
+3
+\`\`\`
+
+Cách lấy tối ưu trong ví dụ đầu tiên: lấy lá bài số 2, lấy lá bài số 4 (theo đánh số ban đầu), lấy
+lá bài số 3.
+
 `.trim();
