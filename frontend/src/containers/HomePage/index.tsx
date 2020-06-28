@@ -21,6 +21,10 @@ export default function HomePage() {
   const [editorSettings, setEditorSettings] = React.useState(DEFAULT_EDITOR_SETTINGS);
 
   const refresh = async () => {
+    if (text.trim() === "") {
+      setPreview(null);
+      return;
+    }
     const res = await api.fetchPreview(text);
     if (res.error) {
       setErrorText(res.error);
@@ -47,6 +51,10 @@ export default function HomePage() {
   function onEditorSettingChange(e: ChangeEvent<EditorSettings>) {
     setEditorSettings(e.newValue);
   }
+
+  React.useEffect(() => {
+    refresh();
+  }, []);
 
   return (
     <div className={styles.page}>

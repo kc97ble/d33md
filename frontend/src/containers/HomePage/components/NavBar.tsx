@@ -31,14 +31,13 @@ export default function NavBar(props: Props) {
               subMenu: {
                 items: [
                   {
-                    text: "Editor setting...",
+                    text: "Editor settings",
                     onClick: () => setDialog(DialogType.EditorSetting),
                   },
                   {
-                    text: "Layout setting...",
+                    text: "Layout settings",
                     onClick: () => setDialog(DialogType.LayoutSetting),
                   },
-                  { text: "Preview setting..." },
                 ],
               },
             },
